@@ -3,22 +3,28 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 require('dotenv').config();
 
-
 // App Setup
 const app = express();
 app.use(express.static('public'));
+
+// db setup
+require('./data/reddit-db');
+
 // Middleware
-
-
 app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
-app.set('views', './views')
+app.set('views', './views');
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// Require controllers
+require('./controllers/posts')(app)
 
 // Routes
-  // ROUTES
-  app.get('/', (req, res) => {
-    res.render('home');
-  })
+// home
+app.get('/', (req, res) => {
+  res.render('home');
+});
 
 // Start Server
 
