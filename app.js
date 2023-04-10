@@ -20,12 +20,6 @@ app.use(express.urlencoded({ extended: false }));
 // Require controllers
 require('./controllers/posts')(app)
 
-// Routes
-// home
-app.get('/', (req, res) => {
-  res.render('home');
-});
-
 // Start Server
 
 app.listen(3000, () => {
