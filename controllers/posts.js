@@ -12,17 +12,6 @@ module.exports = (app) => {
         console.log(err.message);
       })
   })
-  // SHOW
-  // LOOK UP THE POST
-  app.get('/posts/:id', (req, res) => {
-    console.log(req.params.id)
-    Post.findById(req.params.id).lean()
-      .then((post) => res.render('posts-show', { post }))
-      .catch((err) => {
-        console.log(err.message);
-      });
-  });
-
   // NEW
   app.get('/posts/new', (req, res) => {
     res.render('posts-new')
@@ -39,5 +28,16 @@ module.exports = (app) => {
         res.redirect('/')
       })
       .catch(err => console.log(err))
+  });
+
+  // SHOW
+  // LOOK UP THE POST
+  app.get('/posts/:id', (req, res) => {
+    console.log(req.params.id)
+    Post.findById(req.params.id).lean()
+      .then((post) => res.render('posts-show', { post }))
+      .catch((err) => {
+        console.log(err.message);
+      });
   });
 };
