@@ -25,3 +25,5 @@ require('./controllers/posts')(app)
 app.listen(3000, () => {
   console.log('Gif Search listening on port localhost:3000!');
 });
+
+module.exports = app;
