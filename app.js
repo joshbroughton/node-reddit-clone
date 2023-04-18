@@ -1,6 +1,7 @@
 // Require Libraries
 const express = require('express');
 const exphbs = require('express-handlebars');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // App Setup
@@ -16,10 +17,12 @@ app.set('view engine', 'handlebars');
 app.set('views', './views');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 // Require controllers
 require('./controllers/posts')(app);
 require('./controllers/comments.js')(app);
+require('./controllers/auth.js')(app);
 
 // Start Server
 
