@@ -18,7 +18,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 // Require controllers
-require('./controllers/posts')(app)
+require('./controllers/posts')(app);
+require('./controllers/comments.js')(app);
 
 // Start Server
 
