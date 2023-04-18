@@ -37,7 +37,17 @@ module.exports = (app) => {
   app.get('/posts/:id', async (req, res) => {
     try {
       const post = await Post.findById(req.params.id).lean();
-      res.render('posts-show', { post })
+      res.render('posts-show', { post });
+    } catch (err) {
+      console.log(err.message);
+    }
+  });
+
+  // SUBREDDIT
+  app.get('/n/:subreddit', async (req, res) => {
+    try {
+      const posts = await Post.find( { subreddit: req.params.subreddit }).lean();
+      return res.render('posts-index', { posts });
     } catch (err) {
       console.log(err.message)
     }

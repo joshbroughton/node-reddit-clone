@@ -23,7 +23,7 @@ require('./controllers/posts')(app)
 // Start Server
 
 app.listen(3000, () => {
-  console.log('Gif Search listening on port localhost:3000!');
+  console.log('Reddit clone server listening on port localhost:3000!');
 });
 
 module.exports = app;
