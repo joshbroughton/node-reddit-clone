@@ -1,15 +1,14 @@
 // Controller actions for POSTS
 // import model
 const Post = require('../models/post');
+const User = require('../models/user');
 
 
 module.exports = (app) => {
   // root/index
   app.get('/', async (req, res) => {
-    
-
     try {
-      const posts = await Post.find({}).lean();
+      const posts = await Post.find({}).lean().populate('author');
       return res.render('posts-index', { posts });
     } catch (err) {
       console.log(err.message)
@@ -25,9 +24,14 @@ module.exports = (app) => {
   app.post('/posts/new', async (req, res) => {
     if (req.user) {
       try {
+        const userId = req.user._id;
         const post = new Post(req.body);
+        post.author = userId;
         await post.save();
-        res.redirect('/')
+        const user = await User.findById(userId);
+        user.posts.unshift(post);
+        user.save();
+        res.redirect(`/posts/${post._id}`);
       } catch (err) {
         console.log(err);
       }
@@ -39,10 +43,8 @@ module.exports = (app) => {
   // SHOW
   // LOOK UP THE POST
   app.get('/posts/:id', async (req, res) => {
-    
-
     try {
-      const post = await Post.findById(req.params.id).lean().populate('comments');
+      const post = await Post.findById(req.params.id).lean().populate('comments').populate('author');
       res.render('posts-show', { post });
     } catch (err) {
       console.log(err.message);
@@ -51,9 +53,8 @@ module.exports = (app) => {
 
   // SUBREDDIT
   app.get('/n/:subreddit', async (req, res) => {
-    
     try {
-      const posts = await Post.find( { subreddit: req.params.subreddit }).lean();
+      const posts = await Post.find( { subreddit: req.params.subreddit }).lean().populate('author');
       return res.render('posts-index', { posts });
     } catch (err) {
       console.log(err.message)
