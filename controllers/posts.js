@@ -6,6 +6,8 @@ const Post = require('../models/post');
 module.exports = (app) => {
   // root/index
   app.get('/', async (req, res) => {
+    
+
     try {
       const posts = await Post.find({}).lean();
       return res.render('posts-index', { posts });
@@ -15,26 +17,30 @@ module.exports = (app) => {
   })
   // NEW
   app.get('/posts/new', (req, res) => {
-    res.render('posts-new')
+    
+    res.render('posts-new', {  })
   });
 
   // CREATE
   app.post('/posts/new', async (req, res) => {
-    // INSTANTIATE INSTANCE OF POST MODEL
-    const post = new Post(req.body);
-
-    // SAVE INSTANCE OF POST MODEL TO DB AND REDIRECT TO THE ROOT
-    try {
-      await post.save();
-      res.redirect('/')
-    } catch (err) {
-      console.log(err);
+    if (req.user) {
+      try {
+        const post = new Post(req.body);
+        await post.save();
+        res.redirect('/')
+      } catch (err) {
+        console.log(err);
+      }
+    } else {
+      return res.status(401);
     }
   });
 
   // SHOW
   // LOOK UP THE POST
   app.get('/posts/:id', async (req, res) => {
+    
+
     try {
       const post = await Post.findById(req.params.id).lean().populate('comments');
       res.render('posts-show', { post });
@@ -45,6 +51,7 @@ module.exports = (app) => {
 
   // SUBREDDIT
   app.get('/n/:subreddit', async (req, res) => {
+    
     try {
       const posts = await Post.find( { subreddit: req.params.subreddit }).lean();
       return res.render('posts-index', { posts });

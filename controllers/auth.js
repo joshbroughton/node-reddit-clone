@@ -7,8 +7,9 @@ const User = require('../models/user');
 
 module.exports = (app) => {
   // SIGN UP FORM
-  app.get('/sign-up', (req, res) => res.render('sign-up'));
-
+  app.get('/sign-up', (req, res) => {
+    res.render('sign-up')
+  });
   // CREATE USER (SIGN UP POST)
   app.post('/sign-up', async (req, res) => {
     try {
