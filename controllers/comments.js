@@ -6,10 +6,9 @@ const Post = require('../models/post');
 module.exports = (app) => {
   // CREATE Comment
   app.post('/posts/:postId/comments', async (req, res) => {
-    // INSTANTIATE INSTANCE OF MODEL
-    const comment = new Comment(req.body);
-    // SAVE INSTANCE OF Comment MODEL TO DB
     try {
+      const comment = new Comment(req.body);
+      comment.author = req.user._id;
       await comment.save();
       const post = await Post.findById(req.params.postId);
       post.comments.unshift(comment);
