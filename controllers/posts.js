@@ -16,7 +16,6 @@ module.exports = (app) => {
   })
   // NEW
   app.get('/posts/new', (req, res) => {
-    
     res.render('posts-new', {  })
   });
 
