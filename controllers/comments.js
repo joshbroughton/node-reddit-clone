@@ -10,9 +10,11 @@ module.exports = (app) => {
       const comment = new Comment(req.body);
       comment.author = req.user._id;
       await comment.save();
-      const post = await Post.findById(req.params.postId);
-      post.comments.unshift(comment);
-      post.save();
+      const posts = await Promise.all([Post.findById(req.params.postId)])
+      posts.forEach(async (post) => {
+        post.comments.unshift(comment);
+        await post.save();
+      })
       res.redirect(`/posts/${req.params.postId}`)
     } catch (err) {
       console.log(err)
