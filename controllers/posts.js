@@ -26,6 +26,9 @@ module.exports = (app) => {
         const userId = req.user._id;
         const post = new Post(req.body);
         post.author = userId;
+        post.upVotes = [];
+        post.downVotes = [];
+        post.voteScore = 0;
         await post.save();
         const user = await User.findById(userId);
         user.posts.unshift(post);
@@ -55,6 +58,30 @@ module.exports = (app) => {
     try {
       const posts = await Post.find( { subreddit: req.params.subreddit }).lean();
       return res.render('posts-index', { posts });
+    } catch (err) {
+      console.log(err.message)
+    }
+  });
+
+  //UPVOTE
+  app.put('/posts/:id/vote-up', async (req, res) => {
+    try {
+      const post = await Post.findById(req.params.id)
+      post.upVotes.push(req.user._id);
+      post.voteScore += 1;
+      await post.save();
+    } catch (err) {
+      console.log(err.message)
+    }
+  });
+
+  //DOWNVOTE
+  app.put('/posts/:id/vote-down', async (req, res) => {
+    try {
+      const post = await Post.findById(req.params.id)
+      post.downVotes.push(req.user._id);
+      post.voteScore -= 1;
+      await post.save();
     } catch (err) {
       console.log(err.message)
     }
