@@ -7,7 +7,8 @@ module.exports = (app) => {
   // CREATE Comment
   app.post('/posts/:postId/comments', async (req, res) => {
     try {
-      const comment = new Comment(req.body);
+      const sanitizedComment = req.sanitize(req.body.content)
+      const comment = new Comment({ content: sanitizedComment });
       comment.author = req.user._id;
       await comment.save();
       const posts = await Promise.all([Post.findById(req.params.postId)])

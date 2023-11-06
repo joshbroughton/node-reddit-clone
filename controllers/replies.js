@@ -18,7 +18,8 @@ module.exports = (app) => {
 
   app.post('/posts/:postId/comments/:commentId/replies', async (req, res) => {
     try {
-      const reply = new Comment(req.body);
+      const sanitizedInput = req.sanitize(req.body.content)
+      const reply = new Comment({ content: sanitizedInput });
       reply.author = req.user._id;
       const post = Post.findById(req.params.postId);
       await reply.save()
@@ -26,7 +27,7 @@ module.exports = (app) => {
       console.log(comment)
       comment.comments.unshift(reply._id);
       await comment.save();
-      res.redirect(`/posts/${req.params.postId}`); 
+      res.redirect(`/posts/${req.params.postId}`);
     } catch (err) {
       console.log(err);
       res.status(400).json({ error: err.message });

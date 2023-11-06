@@ -4,6 +4,7 @@ const exphbs = require('express-handlebars');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const checkAuth = require('./middleware/checkAuth');
+const expressSanitizer = require('express-sanitizer');
 
 // App Setup
 const app = express();
@@ -17,6 +18,7 @@ app.engine('handlebars', exphbs.engine({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 app.use(express.json());
+app.use(expressSanitizer())
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(checkAuth);

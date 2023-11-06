@@ -13,7 +13,8 @@ module.exports = (app) => {
   // CREATE USER (SIGN UP POST)
   app.post('/sign-up', async (req, res) => {
     try {
-      const user = new User(req.body);
+      const sanitizedUsername = req.sanitize(req.body.username)
+      const user = new User({username: sanitizedUsername, password: req.body.password});
       await user.save();
       const token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: '60d'});
       res.cookie('nToken', token, { maxAge: 900000, httpOnly: true });
@@ -36,17 +37,17 @@ module.exports = (app) => {
   // POST Login
   app.post('/login', async (req, res) => {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username }, 'username password');
+      const sanitizedUsername = req.sanitize(req.body.username)
+      const user = await User.findOne({ username: sanitizedUsername }, 'username password');
       if (!user) {
         // User not found
         return res.status(401).send({ message: 'Wrong Username or Password' });
       }
       // Check the password
-      user.comparePassword(password, (err, isMatch) => {
+      user.comparePassword(req.body.password, (err, isMatch) => {
         if (!isMatch) {
           // Password does not match
-          return res.status(401).send({ message: 'Wrong Username or password' });
+          return res.status(401).send({ message: 'Wrong password' });
         }
         // Create a token
         const token = jwt.sign({ _id: user._id, username: user.username }, process.env.SECRET, {

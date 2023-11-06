@@ -24,7 +24,16 @@ module.exports = (app) => {
     if (req.user) {
       try {
         const userId = req.user._id;
-        const post = new Post(req.body);
+        const title = req.sanitize(req.body.title);
+        const url = req.sanitize(req.body.url);
+        const summary = req.sanitize(req.body.summary);
+        const subreddit = req.sanitize(req.body.subreddit);
+        const post = new Post({
+          title,
+          url,
+          summary,
+          subreddit,
+        });
         post.author = userId;
         await post.save();
         const user = await User.findById(userId);
